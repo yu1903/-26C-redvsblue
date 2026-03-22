@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>Image/blue.bmp</file>
+        <file>Image/flag.bmp</file>
+        <file>Image/purple.bmp</file>
+        <file>Image/red.bmp</file>
+        <file>Image/background.bmp</file>
+    </qresource>
+</RCC>
