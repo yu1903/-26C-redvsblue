@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/cell.dir/PatternSlot.cpp.obj"
+  "CMakeFiles/cell.dir/PatternSlot.cpp.obj.d"
   "CMakeFiles/cell.dir/cell.cpp.obj"
   "CMakeFiles/cell.dir/cell.cpp.obj.d"
   "CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj"

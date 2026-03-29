@@ -5,6 +5,11 @@
 #include <QPainter>
 #include <QTimer>
 #include <QMessageBox>
+#include <QVector>
+#include <QMouseEvent>
+
+// 前置声明卡槽管理类
+class PatternSlot;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,11 +25,27 @@ enum CellType {
     PURPLE_CELL // 紫色细胞
 };
 
+// 旋转方向枚举
+enum RotationDirection {
+    UP_RIGHT,   // 右上（蓝方优先）
+    DOWN_RIGHT, // 右下（蓝方次优先）
+    UP_LEFT,    // 左上（红方优先）
+    DOWN_LEFT   // 左下（红方次优先）
+};
+
 // 旗帜状态结构体
 struct Flag {
     int x;          // 网格X坐标
     int y;          // 网格Y坐标
     bool isAlive;   // 旗帜是否存在
+};
+
+// 细胞组合结构体
+struct CellPattern {
+    QString name;                // 组合名称
+    QVector<QPoint> cellPositions; // 组合内细胞的相对坐标（以中心点为(0,0)）
+    int energyCost;              // 该组合的能量消耗（细胞数*2）
+    int priority;                // 组合优先级（枪:4, 飞船:3, 振荡/稳定:2）
 };
 
 class cell : public QMainWindow
@@ -35,6 +56,24 @@ public:
     explicit cell(QWidget *parent = nullptr);
     ~cell() override;
     void paintEvent(QPaintEvent *event) override;
+    // 重写鼠标点击事件，实现卡槽/按钮/放置交互
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;    // 新增：鼠标拖动
+    void mouseReleaseEvent(QMouseEvent *event) override; // 新增：鼠标释放
+
+    // ===================== 手动放置与界面控制 =====================
+    PatternSlot *slotManager;        // 卡槽管理对象
+    bool isPaused;                    // 游戏暂停状态
+    int generationCount;              // 细胞迭代代数
+
+    // 卡槽UI尺寸常量
+    const int SLOT_WIDTH = 80;
+    const int SLOT_HEIGHT = 60;
+    const int SLOT_MARGIN = 10;
+
+    // 按钮矩形区域
+    QRect pauseButtonRect;            // 暂停按钮位置
+    QRect rotateButtonRect;           // 旋转按钮位置
 
 private slots:
     // 定时器槽函数，更新游戏状态
@@ -76,22 +115,71 @@ private:
     bool gameOver;                         // 游戏是否结束
     QString winner;                        // 获胜方
 
+    // 新增：细胞能量相关
+    int blueEnergy;                        // 蓝方能量
+    int redEnergy;                         // 红方能量
+    const int INITIAL_ENERGY = 200;        // 初始能量
+    const int ENERGY_PER_ITERATION = 1;    // 每次迭代增加的能量
+    const int ENERGY_PER_CELL = 1;         // 己方细胞在紫色区的能量加成
+    const int ENERGY_PER_CELL_PLACEMENT = 2; // 放置单个细胞消耗的能量
+
+    // 新增：细胞组合模板
+    QVector<CellPattern> blueStillLifePatterns;    // 蓝方稳定型组合
+    QVector<CellPattern> blueOscillatorPatterns;   // 蓝方振荡型组合
+    QVector<CellPattern> blueSpaceshipPatterns;    // 蓝方飞船型组合
+    QVector<CellPattern> blueGunPatterns;          // 蓝方枪型组合
+
+    QVector<CellPattern> redStillLifePatterns;     // 红方稳定型组合
+    QVector<CellPattern> redOscillatorPatterns;    // 红方振荡型组合
+    QVector<CellPattern> redSpaceshipPatterns;     // 红方飞船型组合
+    QVector<CellPattern> redGunPatterns;           // 红方枪型组合
+
+    // ========== 新增：计分系统 ==========
+    int blueScore;
+    int redScore;
+    void updateScore();        // 更新分数
+    int countAliveCells(CellType type); // 统计指定颜色存活细胞数
+
     // 初始化函数
-    void initGrid();                       // 初始化细胞网格
+    void initGrid();                       // 初始化细胞网格（全空）
     void initFlags();                      // 初始化旗帜位置
+    void initCellPatterns();               // 初始化细胞组合模板
+    void initEnergy();                     // 初始化能量
 
     // 统计函数
     int countAllAliveCells(int x, int y);  // 统计周围所有活细胞数（红蓝紫）
     int countColorAliveCells(int x, int y, CellType color); // 统计指定颜色细胞数
+    int countOwnCellsInPurpleZone(CellType color); // 统计紫色区己方细胞数
 
     // 游戏规则
     void calculateNextGeneration();        // 计算下一代细胞
     void checkFlagOccupation();            // 检查旗帜是否被占领
     bool checkGameOver();                  // 检查游戏是否结束
 
+    // 新增：细胞组合相关
+    bool placeCellPattern(int centerX, int centerY, const CellPattern& pattern, CellType cellType, RotationDirection dir = UP_RIGHT); // 放置细胞组合（带旋转）
+    void randomPlacePatterns();            // 随机放置细胞组合（按优先级）
+    bool isPlacementValid(int x, int y, const CellPattern& pattern, CellType cellType, RotationDirection dir); // 检查放置是否合法（带旋转）
+    QVector<QPoint> rotatePattern(const QVector<QPoint>& original, RotationDirection dir); // 旋转组合坐标
+    QVector<CellPattern> getPatternsByPriority(CellType cellType); // 按优先级排序获取组合
+
     // 绘制函数
     void drawCells(QPainter &painter);     // 绘制细胞
     void drawFlags(QPainter &painter);     // 绘制旗帜
+    void updateEnergy();                   // 更新能量值
+
+    // 新增UI绘制
+    void drawPatternSlots(QPainter& painter);  // 绘制左侧卡槽
+    void drawPauseButton(QPainter& painter);   // 绘制暂停按钮
+    void drawGenerationInfo(QPainter& painter);// 绘制细胞代数
+    void drawScoreInfo(QPainter& painter);   // 新增：绘制分数
+    bool findNearestValidPos(int& cx, int& cy, const CellPattern& pat, RotationDirection dir); // 寻找最近可放置位置
+
+public:
+    const QVector<CellPattern>& getBlueStillLifePatterns() const { return blueStillLifePatterns; }
+    const QVector<CellPattern>& getBlueOscillatorPatterns() const { return blueOscillatorPatterns; }
+    const QVector<CellPattern>& getBlueSpaceshipPatterns() const { return blueSpaceshipPatterns; }
+    const QVector<CellPattern>& getBlueGunPatterns() const { return blueGunPatterns; }
 };
 
 #endif // CELL_H

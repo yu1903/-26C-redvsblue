@@ -199,6 +199,30 @@ cell_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell_autogen.dir\build.make CMakeFiles/cell_autogen.dir/build
 .PHONY : cell_autogen/fast
 
+PatternSlot.obj: PatternSlot.cpp.obj
+.PHONY : PatternSlot.obj
+
+# target to build an object file
+PatternSlot.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/PatternSlot.cpp.obj
+.PHONY : PatternSlot.cpp.obj
+
+PatternSlot.i: PatternSlot.cpp.i
+.PHONY : PatternSlot.i
+
+# target to preprocess a source file
+PatternSlot.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/PatternSlot.cpp.i
+.PHONY : PatternSlot.cpp.i
+
+PatternSlot.s: PatternSlot.cpp.s
+.PHONY : PatternSlot.s
+
+# target to generate assembly for a file
+PatternSlot.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/PatternSlot.cpp.s
+.PHONY : PatternSlot.cpp.s
+
 cell.obj: cell.cpp.obj
 .PHONY : cell.obj
 
@@ -310,6 +334,9 @@ help:
 	@echo ... cell_autogen
 	@echo ... cell_autogen_timestamp_deps
 	@echo ... cell
+	@echo ... PatternSlot.obj
+	@echo ... PatternSlot.i
+	@echo ... PatternSlot.s
 	@echo ... cell.obj
 	@echo ... cell.i
 	@echo ... cell.s

@@ -325,6 +325,7 @@
 	"DEP_FILE_RULE_NAME" : "cell_autogen/timestamp",
 	"HEADERS" : 
 	[
+		[ "D:/cell/PatternSlot.h", "MU", "EWIEGA46WW/moc_PatternSlot.cpp", null ],
 		[ "D:/cell/cell.h", "MU", "EWIEGA46WW/moc_cell.cpp", null ]
 	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
@@ -399,6 +400,7 @@
 	"SETTINGS_FILE" : "D:/cell/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/CMakeFiles/cell_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[ "D:/cell/PatternSlot.cpp", "MU", null ],
 		[ "D:/cell/cell.cpp", "MU", null ],
 		[ "D:/cell/main.cpp", "MU", null ]
 	],
