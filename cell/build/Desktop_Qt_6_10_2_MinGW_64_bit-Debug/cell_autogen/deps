@@ -149,6 +149,7 @@ cell_autogen/timestamp: \
 	D:/Qt/6.10.2/mingw_64/include/QtCore/qyieldcpu.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/QMouseEvent \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/QPainter \
+	D:/Qt/6.10.2/mingw_64/include/QtGui/QPixmap \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/QTransform \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qaction.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qbitmap.h \
@@ -172,6 +173,7 @@ cell_autogen/timestamp: \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qpainter.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qpalette.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qpen.h \
+	D:/Qt/6.10.2/mingw_64/include/QtGui/qpicture.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qpixelformat.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qpixmap.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qpointingdevice.h \
@@ -181,6 +183,9 @@ cell_autogen/timestamp: \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qrgba64.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qscreen.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qscreen_platform.h \
+	D:/Qt/6.10.2/mingw_64/include/QtGui/qtextcursor.h \
+	D:/Qt/6.10.2/mingw_64/include/QtGui/qtextdocument.h \
+	D:/Qt/6.10.2/mingw_64/include/QtGui/qtextformat.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qtextoption.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qtgui-config.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qtguiexports.h \
@@ -190,14 +195,29 @@ cell_autogen/timestamp: \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qvectornd.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qwindowdefs.h \
 	D:/Qt/6.10.2/mingw_64/include/QtGui/qwindowdefs_win.h \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/QDialog \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/QLabel \
 	D:/Qt/6.10.2/mingw_64/include/QtWidgets/QMainWindow \
 	D:/Qt/6.10.2/mingw_64/include/QtWidgets/QMessageBox \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/QPushButton \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/QTextEdit \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/QVBoxLayout \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qabstractbutton.h \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qboxlayout.h \
 	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qdialog.h \
 	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qframe.h \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qgridlayout.h \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qlabel.h \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qlayout.h \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qlayoutitem.h \
 	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qmainwindow.h \
 	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qmessagebox.h \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qpushbutton.h \
 	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qsizepolicy.h \
 	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qtabwidget.h \
+	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qtextedit.h \
 	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qtwidgets-config.h \
 	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qtwidgetsexports.h \
 	D:/Qt/6.10.2/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -598,8 +618,12 @@ cell_autogen/timestamp: \
 	D:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/vadefs.h \
 	D:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/wchar.h \
 	D:/cell/CMakeLists.txt \
+	D:/cell/HelpDialog.cpp \
+	D:/cell/HelpDialog.h \
 	D:/cell/PatternSlot.cpp \
 	D:/cell/PatternSlot.h \
+	D:/cell/StartWindow.cpp \
+	D:/cell/StartWindow.h \
 	D:/cell/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/.qtcreator/cmake-helper/maintenance_tool_provider.cmake \
 	D:/cell/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/.qtcreator/cmake-helper/package-manager.cmake \
 	D:/cell/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/.qtcreator/cmake-helper/qtcreator-project.cmake \

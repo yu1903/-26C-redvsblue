@@ -1,5 +1,10 @@
+//cell.h
+
 #ifndef CELL_H
 #define CELL_H
+
+
+class StartWindow;  // 前置声明
 
 #include <QMainWindow>
 #include <QPainter>
@@ -48,6 +53,15 @@ struct CellPattern {
     int priority;                // 组合优先级（枪:4, 飞船:3, 振荡/稳定:2）
 };
 
+// ===================== 新增：清除卡牌结构体 =====================
+struct ClearCard {
+    int size;           // 清除范围 N*N
+    int energyCost;     // 消耗能量
+    int cooldown;       // 总冷却代
+    int remain;         // 剩余冷却
+    QString text;       // 显示文字 清除5~10
+};
+
 class cell : public QMainWindow
 {
     Q_OBJECT
@@ -58,8 +72,8 @@ public:
     void paintEvent(QPaintEvent *event) override;
     // 重写鼠标点击事件，实现卡槽/按钮/放置交互
     void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;    // 新增：鼠标拖动
-    void mouseReleaseEvent(QMouseEvent *event) override; // 新增：鼠标释放
+    void mouseMoveEvent(QMouseEvent *event) override;    // 鼠标拖动
+    void mouseReleaseEvent(QMouseEvent *event) override; // 鼠标释放
 
     // ===================== 手动放置与界面控制 =====================
     PatternSlot *slotManager;        // 卡槽管理对象
@@ -118,12 +132,13 @@ private:
     // 新增：细胞能量相关
     int blueEnergy;                        // 蓝方能量
     int redEnergy;                         // 红方能量
-    const int INITIAL_ENERGY = 200;        // 初始能量
+    const int INITIAL_ENERGY = 30;        // 初始能量
     const int ENERGY_PER_ITERATION = 1;    // 每次迭代增加的能量
     const int ENERGY_PER_CELL = 1;         // 己方细胞在紫色区的能量加成
-    const int ENERGY_PER_CELL_PLACEMENT = 2; // 放置单个细胞消耗的能量
+    const int ENERGY_PER_CELL_PLACEMENT = 5; // 放置单个细胞消耗的能量
 
     // 新增：细胞组合模板
+    QVector<CellPattern> bluesingleLifePatterns;    // 蓝方单细胞组合
     QVector<CellPattern> blueStillLifePatterns;    // 蓝方稳定型组合
     QVector<CellPattern> blueOscillatorPatterns;   // 蓝方振荡型组合
     QVector<CellPattern> blueSpaceshipPatterns;    // 蓝方飞船型组合
@@ -134,7 +149,7 @@ private:
     QVector<CellPattern> redSpaceshipPatterns;     // 红方飞船型组合
     QVector<CellPattern> redGunPatterns;           // 红方枪型组合
 
-    // ========== 新增：计分系统 ==========
+    // ========== 计分系统 ==========
     int blueScore;
     int redScore;
     void updateScore();        // 更新分数
@@ -156,7 +171,7 @@ private:
     void checkFlagOccupation();            // 检查旗帜是否被占领
     bool checkGameOver();                  // 检查游戏是否结束
 
-    // 新增：细胞组合相关
+    // 细胞组合相关
     bool placeCellPattern(int centerX, int centerY, const CellPattern& pattern, CellType cellType, RotationDirection dir = UP_RIGHT); // 放置细胞组合（带旋转）
     void randomPlacePatterns();            // 随机放置细胞组合（按优先级）
     bool isPlacementValid(int x, int y, const CellPattern& pattern, CellType cellType, RotationDirection dir); // 检查放置是否合法（带旋转）
@@ -172,8 +187,17 @@ private:
     void drawPatternSlots(QPainter& painter);  // 绘制左侧卡槽
     void drawPauseButton(QPainter& painter);   // 绘制暂停按钮
     void drawGenerationInfo(QPainter& painter);// 绘制细胞代数
-    void drawScoreInfo(QPainter& painter);   // 新增：绘制分数
+    void drawScoreInfo(QPainter& painter);   // 绘制分数
     bool findNearestValidPos(int& cx, int& cy, const CellPattern& pat, RotationDirection dir); // 寻找最近可放置位置
+
+    // ===================== 新增：清除细胞卡牌系统 =====================
+    QVector<ClearCard> m_clearCards;
+    void initClearCards();                  // 初始化清除卡牌
+    void drawClearSlots(QPainter& painter); // 绘制清除卡牌UI
+    void updateClearCooldown();             // 每代更新冷却
+    bool useClearCard(int idx, int cx, int cy); // 使用清除卡牌
+
+    int selectedClearCardIndex = -1;//是否点击清除细胞卡片
 
 public:
     const QVector<CellPattern>& getBlueStillLifePatterns() const { return blueStillLifePatterns; }
