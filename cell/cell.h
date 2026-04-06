@@ -53,7 +53,7 @@ struct CellPattern {
     int priority;                // 组合优先级（枪:4, 飞船:3, 振荡/稳定:2）
 };
 
-// ===================== 新增：清除卡牌结构体 =====================
+// ===================== 清除卡牌结构体 =====================
 struct ClearCard {
     int size;           // 清除范围 N*N
     int energyCost;     // 消耗能量
@@ -88,6 +88,13 @@ public:
     // 按钮矩形区域
     QRect pauseButtonRect;            // 暂停按钮位置
     QRect rotateButtonRect;           // 旋转按钮位置
+    QRect backToMenuButtonRect;       // 返回主界面按钮（新增）
+
+    // ===================== 新增：倍速按钮区域 =====================
+    QRect speed2xButtonRect;          // 2倍速按钮 >>
+    QRect speed3xButtonRect;          // 3倍速按钮 >>>
+    QRect speed10xButtonRect;          // 10倍速按钮 ×10
+    int currentSpeed;                  // 当前速度 1=正常 2=2倍 3=3倍
 
 private slots:
     // 定时器槽函数，更新游戏状态
@@ -103,15 +110,15 @@ private:
     static const int CELL_HEIGHT = 12;     // 细胞/旗帜高度
 
     // 计算网格行列数
-    static const int GRID_ROWS = GAME_HEIGHT / CELL_HEIGHT;
-    static const int GRID_COLS = GAME_WIDTH / CELL_WIDTH;
+    static const int GRID_ROWS = GAME_HEIGHT / CELL_HEIGHT;//第几行，对应定义Y轴
+    static const int GRID_COLS = GAME_WIDTH / CELL_WIDTH;//第几列，对应定义X轴
 
     // 旗帜相关常量
     static const int FLAG_COUNT = 5;       // 每方旗帜数量
 
     // 细胞状态数组（当前代和下一代）
-    CellType currentGrid[GRID_ROWS][GRID_COLS];
-    CellType nextGrid[GRID_ROWS][GRID_COLS];
+    CellType currentGrid[GRID_COLS][GRID_ROWS];//应为【X】【Y】
+    CellType nextGrid[GRID_COLS][GRID_ROWS];//应为【X】【Y】
 
     // 旗帜数组
     Flag blueFlags[FLAG_COUNT];            // 蓝色旗帜
@@ -129,7 +136,7 @@ private:
     bool gameOver;                         // 游戏是否结束
     QString winner;                        // 获胜方
 
-    // 新增：细胞能量相关
+    // 细胞能量相关
     int blueEnergy;                        // 蓝方能量
     int redEnergy;                         // 红方能量
     const int INITIAL_ENERGY = 30;        // 初始能量
@@ -137,7 +144,7 @@ private:
     const int ENERGY_PER_CELL = 1;         // 己方细胞在紫色区的能量加成
     const int ENERGY_PER_CELL_PLACEMENT = 5; // 放置单个细胞消耗的能量
 
-    // 新增：细胞组合模板
+    // 细胞组合模板
     QVector<CellPattern> bluesingleLifePatterns;    // 蓝方单细胞组合
     QVector<CellPattern> blueStillLifePatterns;    // 蓝方稳定型组合
     QVector<CellPattern> blueOscillatorPatterns;   // 蓝方振荡型组合
@@ -190,20 +197,28 @@ private:
     void drawScoreInfo(QPainter& painter);   // 绘制分数
     bool findNearestValidPos(int& cx, int& cy, const CellPattern& pat, RotationDirection dir); // 寻找最近可放置位置
 
-    // ===================== 新增：清除细胞卡牌系统 =====================
+    // ===================== 新增：绘制倍速按钮 =====================
+    void drawSpeedButtons(QPainter& painter);
+
+
+    // ===================== 清除细胞卡牌系统 =====================
     QVector<ClearCard> m_clearCards;
     void initClearCards();                  // 初始化清除卡牌
-    void drawClearSlots(QPainter& painter); // 绘制清除卡牌UI
+    void drawClearSlots(QPainter& painter, int yOffset); // 绘制清除卡牌UI
     void updateClearCooldown();             // 每代更新冷却
     bool useClearCard(int idx, int cx, int cy); // 使用清除卡牌
 
     int selectedClearCardIndex = -1;//是否点击清除细胞卡片
 
 public:
+    const QVector<CellPattern>& getbluesingleLifePatterns() const { return bluesingleLifePatterns; }
     const QVector<CellPattern>& getBlueStillLifePatterns() const { return blueStillLifePatterns; }
     const QVector<CellPattern>& getBlueOscillatorPatterns() const { return blueOscillatorPatterns; }
     const QVector<CellPattern>& getBlueSpaceshipPatterns() const { return blueSpaceshipPatterns; }
     const QVector<CellPattern>& getBlueGunPatterns() const { return blueGunPatterns; }
+
+private:
+    void drawBackToMenuButton(QPainter& painter); // 绘制返回按钮（新增）
 };
 
 #endif // CELL_H

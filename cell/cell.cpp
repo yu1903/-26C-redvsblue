@@ -5,6 +5,8 @@
 #include "cell.h"
 #include "./ui_cell.h"
 #include "PatternSlot.h"
+#include "StartWindow.h"
+
 #include <QRandomGenerator>
 #include <QDebug>
 #include <algorithm>
@@ -27,6 +29,7 @@ cell::cell(QWidget *parent)
     , generationCount(0)
     , blueScore(0)
     , redScore(0)
+    , currentSpeed(1)  // 新增：默认正常速度
 {
     ui->setupUi(this);
 
@@ -51,12 +54,20 @@ cell::cell(QWidget *parent)
     slotManager = new PatternSlot(this);
     slotManager->initAllPatterns(this);
 
-    // ===================== 新增：初始化清除卡牌 =====================
+    // ===================== 初始化清除卡牌 =====================
     initClearCards();
 
     // 设置按钮位置
     pauseButtonRect = QRect(1670, 0, 30, 30);    // 右上角暂停按钮
     rotateButtonRect = QRect(20, 10, 20, 20);     // 左上角旋转按钮
+
+    // ===================== 新增：倍速按钮位置（右上角并排） =====================
+    speed2xButtonRect = QRect(1640, 0, 30, 30);    // >> 2倍速
+    speed3xButtonRect = QRect(1610, 0, 30, 30);    // >>> 3倍速
+    speed10xButtonRect = QRect(1580, 0, 30, 30);    // ×10 10倍速
+
+    // ===================== 新增：返回主界面按钮 =====================
+    backToMenuButtonRect = QRect(790, 475, 120, 40);
 
     // 设置定时器（每300ms更新一次）
     gameTimer = new QTimer(this);
@@ -69,7 +80,7 @@ cell::~cell()
     delete ui;
 }
 
-// ===================== 新增：初始化清除卡牌 5*5 ~ 10*10 =====================
+// ===================== 初始化清除卡牌 5*5 ~ 10*10 =====================
 void cell::initClearCards()
 {
     m_clearCards.clear();//vector的函数clear（），使得vector的大小（size）变为0.
@@ -88,8 +99,8 @@ void cell::initClearCards()
 // 初始化细胞网格：全场空细胞
 void cell::initGrid()
 {
-    for (int i = 0; i < GRID_ROWS; ++i) {
-        for (int j = 0; j < GRID_COLS; ++j) {
+    for (int i = 0; i < GRID_COLS; ++i) {
+        for (int j = 0; j < GRID_ROWS; ++j) {
             currentGrid[i][j] = EMPTY;
             nextGrid[i][j] = EMPTY;
         }
@@ -97,8 +108,8 @@ void cell::initGrid()
 
     //初始时的紫色细胞放置
     // 只遍历中间紫色区域 75~124 列
-    for (int i = 0; i < GRID_ROWS; ++i) {
-        for (int j = 75; j <= 124; ++j) {
+    for(int i = 75; i <= 124; ++i)  {
+        for(int j = 0; j < GRID_ROWS; ++j)  {
             int randVal = QRandomGenerator::global()->bounded(100);
             // 10%概率生成紫色细胞
             if (randVal < 20) {
@@ -239,17 +250,68 @@ void cell::initCellPatterns()
     glider.priority = 3;
     blueSpaceshipPatterns.append(glider);
 
-  /*  // 补充飞船型
-    for (int i = 1; i < 5; ++i) {
-        CellPattern pattern;
-        pattern.name = QString("飞船型%1").arg(i+1);
-        for (int j = 0; j < 5 + i % 3; ++j) {
-            pattern.cellPositions.append(QPoint(j%5 -2, j/5 -1));
-        }
-        pattern.energyCost = pattern.cellPositions.size() * ENERGY_PER_CELL_PLACEMENT;
-        pattern.priority = 3;
-        blueSpaceshipPatterns.append(pattern);
-    }*/
+    // 2. 轻型飞船 (Lightweight spaceship)
+    CellPattern lwss;
+    lwss.name = "轻型飞船";
+    lwss.cellPositions = {
+        QPoint(1,0), QPoint(4,0),
+        QPoint(0,1),
+        QPoint(0,2),QPoint(4,2),
+        QPoint(0,3), QPoint(1,3), QPoint(2,3), QPoint(3,3)
+    };
+    lwss.energyCost = lwss.cellPositions.size() * ENERGY_PER_CELL_PLACEMENT;
+    lwss.priority = 3;
+    blueSpaceshipPatterns.append(lwss);
+
+    // 3. 中型飞船 (Middleweight spaceship)
+    CellPattern mwss;
+    mwss.name = "中型飞船";
+    mwss.cellPositions = {
+        QPoint(0, 3),
+        QPoint(1,1), QPoint(1,5),
+        QPoint(2,0),
+        QPoint(3,0),
+        QPoint(3,5),
+        QPoint(4,0), QPoint(4,1), QPoint(4,2), QPoint(4,3), QPoint(4,4)
+    };
+    mwss.energyCost = mwss.cellPositions.size() * ENERGY_PER_CELL_PLACEMENT;
+    mwss.priority = 3;
+    blueSpaceshipPatterns.append(mwss);
+
+    // 4. 空间犁 (Backward space rake)
+    CellPattern spaceRake;
+    spaceRake.name = "空间犁";
+    spaceRake.cellPositions = {
+        // 左上组
+        QPoint(-3, 2), QPoint(-2, 2), QPoint(-1, 2), QPoint(0, 2), QPoint(1, 2),
+        QPoint(-4, 1), QPoint(-3, 1), QPoint(-2, 1), QPoint(-1, 1),
+        QPoint(-3, 0), QPoint(-2, 0),
+        // 右上组
+        QPoint(3, 2), QPoint(4, 2), QPoint(5, 2), QPoint(6, 2),
+        QPoint(3, 1), QPoint(6, 1),
+        QPoint(4, 0),
+        // 左中组
+        QPoint(-5, -3), QPoint(-4, -3), QPoint(-3, -3),
+        QPoint(-5, -4), QPoint(-3, -4),
+        QPoint(-4, -5), QPoint(-3, -5), QPoint(-2, -5), QPoint(-1, -5),
+        QPoint(-1, -6),
+        // 右中组
+        QPoint(3, -3), QPoint(4, -3),
+        QPoint(2, -4), QPoint(5, -4),
+        QPoint(2, -5), QPoint(3, -5), QPoint(5, -5),
+        QPoint(2, -6), QPoint(3, -6),
+        // 左下组
+        QPoint(-7, -1), QPoint(-6, -1), QPoint(-5, -1), QPoint(-4, -1),
+        QPoint(-8, 0), QPoint(-4, 0),
+        QPoint(-8, 2), QPoint(-6, 2),
+        // 右下组
+        QPoint(5, -1), QPoint(6, -1), QPoint(7, -1), QPoint(8, -1),
+        QPoint(5, 0), QPoint(8, 0),
+        QPoint(5, 2), QPoint(7, 2)
+    };
+    spaceRake.energyCost = spaceRake.cellPositions.size() * ENERGY_PER_CELL_PLACEMENT;
+    spaceRake.priority = 3;
+    blueSpaceshipPatterns.append(spaceRake);
 
     // ------------------- 蓝方枪型组合（优先级4） -------------------
     // 1. 高斯珀滑翔机枪（简化版）
@@ -316,7 +378,14 @@ void cell::initCellPatterns()
 
     redSpaceshipPatterns.append(glider);
 
-    // 补充飞船型
+    // 2. 轻型飞船 (Lightweight spaceship)
+    redSpaceshipPatterns.append(lwss);
+
+    // 3. 中型飞船 (Middleweight spaceship)
+    redSpaceshipPatterns.append(mwss);
+
+    // 4. 空间犁 (Backward space rake)
+    redSpaceshipPatterns.append(spaceRake);
 
 
     // ------------------- 红方枪型组合（优先级4） -------------------
@@ -327,27 +396,7 @@ void cell::initCellPatterns()
 
 }
 /*//不再按固定优先级，而是有一定概率。优先的概率高。
-// 按优先级降序获取组合
-QVector<CellPattern> cell::getPatternsByPriority(CellType cellType)
-{
-    QVector<CellPattern> allPatterns;
 
-    if (cellType == BLUE_CELL) {
-        allPatterns << blueGunPatterns << blueSpaceshipPatterns
-                    << blueOscillatorPatterns << blueStillLifePatterns;
-    } else if (cellType == RED_CELL) {
-        allPatterns << redGunPatterns << redSpaceshipPatterns
-                    << redOscillatorPatterns << redStillLifePatterns;
-    }
-
-    // 按优先级从高到低排序
-    std::sort(allPatterns.begin(), allPatterns.end(),
-              [](const CellPattern& a, const CellPattern& b) {
-                  return a.priority > b.priority;
-              });
-
-    return allPatterns;
-}
 */
 
 // 统计周围8邻域所有活细胞（红蓝紫）
@@ -363,7 +412,7 @@ int cell::countAllAliveCells(int x, int y)
             int ny = y + dy;
 
             // 边界检查
-            if (nx >= 0 && nx < GRID_ROWS && ny >= 0 && ny < GRID_COLS) {
+            if (nx >= 0 && nx < GRID_COLS && ny >= 0 && ny < GRID_ROWS) {
                 if (currentGrid[nx][ny] != EMPTY) {
                     count++;
                 }
@@ -385,7 +434,7 @@ int cell::countColorAliveCells(int x, int y, CellType color)
             int nx = x + dx;
             int ny = y + dy;
 
-            if (nx >= 0 && nx < GRID_ROWS && ny >= 0 && ny < GRID_COLS) {
+            if (nx >= 0 && nx < GRID_COLS && ny >= 0 && ny < GRID_ROWS) {
                 if (currentGrid[nx][ny] == color) {
                     count++;
                 }
@@ -399,8 +448,8 @@ int cell::countColorAliveCells(int x, int y, CellType color)
 int cell::countOwnCellsInPurpleZone(CellType color)
 {
     int count = 0;
-    for (int i = 0; i < GRID_ROWS; ++i) {
-        for (int j = 75; j <= 124; ++j) {
+    for (int i = 75; i <= 124; ++i) {
+        for(int j = 0; j < GRID_ROWS; ++j)  {
             if (currentGrid[i][j] == color) {
                 count++;
             }
@@ -447,12 +496,12 @@ bool cell::isPlacementValid(int centerX, int centerY, const CellPattern& pattern
         int y = centerY + p.y();
 
         // 越界判断
-        if (x < 0 || x >= GRID_ROWS || y < 0 || y >= GRID_COLS) {
+        if (x < 0 || x >= GRID_COLS || y < 0 || y >= GRID_ROWS) {
             return false;
         }
 
         // 阵营区域判断
-        if (y < minCol || y > maxCol) {
+        if (x < minCol || x > maxCol) {
             return false;
         }
 
@@ -556,8 +605,8 @@ void cell::randomPlacePatterns()
             bool ok = false;
             int tryCnt = 0;
             while (tryCnt++ < maxAttempts && !ok) {
-                int cx = QRandomGenerator::global()->bounded(GRID_ROWS);
-                int cy = QRandomGenerator::global()->bounded(125, 200); // 红方区域
+                int cx = QRandomGenerator::global()->bounded(125, 200);
+                int cy = QRandomGenerator::global()->bounded(GRID_ROWS); // 红方区域
                 ok = placeCellPattern(cx, cy, pattern, RED_CELL, redDir);
             }
         }
@@ -572,7 +621,7 @@ void cell::checkFlagOccupation()
         if (blueFlags[i].isAlive) {
             int x = blueFlags[i].x;
             int y = blueFlags[i].y;
-            if (currentGrid[y][x] == RED_CELL || currentGrid[y][x] == PURPLE_CELL) {
+            if (currentGrid[x][y] == RED_CELL || currentGrid[x][y] == PURPLE_CELL) {
                 blueFlags[i].isAlive = false;
             }
         }
@@ -583,7 +632,7 @@ void cell::checkFlagOccupation()
         if (redFlags[i].isAlive) {
             int x = redFlags[i].x;
             int y = redFlags[i].y;
-            if (currentGrid[y][x] == BLUE_CELL || currentGrid[y][x] == PURPLE_CELL) {
+            if (currentGrid[x][y] == BLUE_CELL || currentGrid[x][y] == PURPLE_CELL) {
                 redFlags[i].isAlive = false;
             }
         }
@@ -637,8 +686,8 @@ bool cell::checkGameOver()
 // 计算下一代细胞状态（康威规则+颜色生成规则）
 void cell::calculateNextGeneration()
 {
-    for (int i = 0; i < GRID_ROWS; ++i) {
-        for (int j = 0; j < GRID_COLS; ++j) {
+    for (int i = 0; i < GRID_COLS; ++i) {
+        for (int j = 0; j < GRID_ROWS; ++j) {
             CellType currentType = currentGrid[i][j];
             int allAlive = countAllAliveCells(i, j);
             int blueAlive = countColorAliveCells(i, j, BLUE_CELL);
@@ -665,8 +714,8 @@ void cell::calculateNextGeneration()
     }
 
     // 覆盖当前代
-    for (int i = 0; i < GRID_ROWS; ++i) {
-        for (int j = 0; j < GRID_COLS; ++j) {
+    for (int i = 0; i < GRID_COLS; ++i) {
+        for (int j = 0; j < GRID_ROWS; ++j) {
             currentGrid[i][j] = nextGrid[i][j];
         }
     }
@@ -678,6 +727,10 @@ void cell::calculateNextGeneration()
         if (gameOver) {
             gameTimer->stop();
             QMessageBox::information(this, "游戏结束", winner + "获胜！");
+
+            // 新增：游戏结束后允许返回主界面
+            isPaused = true;
+            update(); // 刷新界面显示返回按钮
         }
     }
 }
@@ -685,10 +738,10 @@ void cell::calculateNextGeneration()
 // 绘制所有细胞
 void cell::drawCells(QPainter &painter)
 {
-    for (int i = 0; i < GRID_ROWS; ++i) {
-        for (int j = 0; j < GRID_COLS; ++j) {
-            int x = 100 + j * CELL_WIDTH;
-            int y = 30 + i * CELL_HEIGHT;
+    for (int i = 0; i < GRID_COLS; ++i) {
+        for (int j = 0; j < GRID_ROWS; ++j) {
+            int x = 100 + i * CELL_WIDTH;
+            int y = 30 + j * CELL_HEIGHT;
 
             switch (currentGrid[i][j]) {
             case BLUE_CELL:
@@ -756,9 +809,14 @@ void cell::paintEvent(QPaintEvent *event)
     drawPauseButton(painter);
     drawGenerationInfo(painter);
     drawScoreInfo(painter); // 绘制分数
+
+    // ===================== 新增：绘制倍速按钮 =====================
+    drawSpeedButtons(painter);
+
+    drawBackToMenuButton(painter); // 新增：绘制返回按钮
 }
 
-// ===================== 新增：清除卡牌冷却更新 =====================
+// ===================== 清除卡牌冷却更新 =====================
 void cell::updateClearCooldown()
 {
     for(auto &c : m_clearCards){
@@ -781,12 +839,12 @@ void cell::updateGameState()
     }
 }
 
-// ===================== 新增：绘制清除卡牌（顶部显示） =====================
-void cell::drawClearSlots(QPainter& painter)
+// ===================== 绘制清除卡牌（顶部显示） =====================
+void cell::drawClearSlots(QPainter& painter, int yOffset)
 {
     painter.save();
     int xBase = SLOT_MARGIN;
-    int yBase = 40;
+    int yBase = yOffset;
     painter.setFont(QFont("Arial",9));
 
     for(int i=0;i<m_clearCards.size();i++){
@@ -839,7 +897,7 @@ void cell::drawPatternSlots(QPainter& painter)
 
 
     // ===================== 绘制清除卡牌（最顶部） =====================
-    drawClearSlots(painter);
+    drawClearSlots(painter,40 + slotManager->scrollOffset);
 
     // 6 张清除卡，每张 = SLOT_HEIGHT + 10 间距[1]
     int CLEAR_SLOTS_TOTAL_HEIGHT = m_clearCards.size() * (SLOT_HEIGHT + 10);
@@ -883,8 +941,8 @@ void cell::drawPatternSlots(QPainter& painter)
         painter.setPen(Qt::blue);
         painter.setBrush(Qt::blue);
         for (const QPoint& p : pts) {
-            int px = cx + p.y() * 3;
-            int py = cy + p.x() * 3;
+            int px = cx + p.x() * 3;
+            int py = cy + p.y() * 3;
             painter.drawEllipse(px - 2, py - 2, 4, 4);
         }
     }
@@ -908,6 +966,38 @@ void cell::drawPauseButton(QPainter& painter)
     painter.drawText(pauseButtonRect, Qt::AlignCenter, isPaused ? "▶" : "||");
 }
 
+// ===================== 新增：绘制倍速按钮 =====================
+void cell::drawSpeedButtons(QPainter& painter)
+{
+    // 绘制 2倍速按钮 >>
+    painter.setPen(Qt::black);
+    if(currentSpeed == 2){
+        painter.setBrush(QColor(255, 220, 100)); // 选中高亮
+    } else {
+        painter.setBrush(QColor(220, 220, 220));
+    }
+    painter.drawRect(speed2xButtonRect);
+    painter.drawText(speed2xButtonRect, Qt::AlignCenter, ">>");
+
+    // 绘制 3倍速按钮 >>>
+    if(currentSpeed == 3){
+        painter.setBrush(QColor(255, 180, 80));
+    } else {
+        painter.setBrush(QColor(220, 220, 220));
+    }
+    painter.drawRect(speed3xButtonRect);
+    painter.drawText(speed3xButtonRect, Qt::AlignCenter, ">>>");
+
+    // 绘制 10倍速按钮 ×10
+    if(currentSpeed == 10){
+        painter.setBrush(QColor(255, 180, 80));
+    } else {
+        painter.setBrush(QColor(220, 220, 220));
+    }
+    painter.drawRect(speed10xButtonRect);
+    painter.drawText(speed10xButtonRect, Qt::AlignCenter, "×10");
+}
+
 // 绘制细胞代数
 void cell::drawGenerationInfo(QPainter& painter)
 {
@@ -924,8 +1014,8 @@ bool cell::findNearestValidPos(int& cx, int& cy, const CellPattern& pat, Rotatio
     bool found = false;
 
     // 遍历蓝方全区域搜索
-    for (int i = 0; i < GRID_ROWS; ++i) {
-        for (int j = 0; j < 75; ++j) {
+    for (int i = 0; i < 75; ++i) {
+        for (int j = 0; j < GRID_ROWS; ++j) {
             if (isPlacementValid(i, j, pat, BLUE_CELL, dir)) {
                 int dist = (i - cx) * (i - cx) + (j - cy) * (j - cy);
                 if (dist < minDist) {
@@ -945,7 +1035,7 @@ bool cell::findNearestValidPos(int& cx, int& cy, const CellPattern& pat, Rotatio
     return found;
 }
 
-// ===================== 新增：使用清除卡牌 =====================
+// ===================== 使用清除卡牌 =====================
 bool cell::useClearCard(int idx, int cx, int cy)
 {
     if(idx <0 || idx >= m_clearCards.size()) return false;
@@ -962,7 +1052,7 @@ bool cell::useClearCard(int idx, int cx, int cy)
         for(int dy=-n; dy<=n; dy++){
             int x = cx+dx;
             int y = cy+dy;
-            if(x>=0 && x<GRID_ROWS && y>=0 && y<GRID_COLS){
+            if(x>=0 && x<GRID_COLS && y>=0 && y<GRID_ROWS){
                 currentGrid[x][y] = EMPTY;
             }
         }
@@ -983,10 +1073,10 @@ void cell::mousePressEvent(QMouseEvent *event)
     QPoint clickPos = event->pos();
 
 
-    // ===================== 新增：点击清除卡牌 = 选中卡牌 =====================
+    // ===================== 点击清除卡牌 = 选中卡牌 =====================
     int clearCardHeight = SLOT_HEIGHT + 10;
     if (clickPos.x() >= SLOT_MARGIN && clickPos.x() <= SLOT_MARGIN + SLOT_WIDTH) {
-        int y = clickPos.y() - 40;
+        int y = clickPos.y() - 40 - slotManager->scrollOffset;
         if (y >= 0 && y < m_clearCards.size() * clearCardHeight) {
             int idx = y / clearCardHeight;
 
@@ -999,13 +1089,13 @@ void cell::mousePressEvent(QMouseEvent *event)
         }
     }
 
-    // ===================== 新增：点击地图 = 执行清除 =====================
+    // ===================== 点击地图 = 执行清除 =====================
     if (selectedClearCardIndex != -1) {
         // 把鼠标坐标 → 地图网格坐标
         int mx = event->x() - 100;
         int my = event->y() - 30;
-        int gx = my / CELL_HEIGHT;
-        int gy = mx / CELL_WIDTH;
+        int gx = mx / CELL_WIDTH;
+        int gy = my / CELL_HEIGHT;
 
         // 执行清除
         useClearCard(selectedClearCardIndex, gx, gy);
@@ -1070,8 +1160,8 @@ void cell::mousePressEvent(QMouseEvent *event)
         // 鼠标坐标转网格坐标
         int mx = clickPos.x() - 100;
         int my = clickPos.y() - 30;
-        int gridX = my / CELL_HEIGHT;
-        int gridY = mx / CELL_WIDTH;
+        int gridX = mx / CELL_WIDTH;
+        int gridY = my / CELL_HEIGHT;
 
         const CellPattern& pat = slotManager->allBluePatterns[slotManager->selectedIndex];
         RotationDirection dir = slotManager->currentRotate;
@@ -1087,6 +1177,56 @@ void cell::mousePressEvent(QMouseEvent *event)
             //slotManager->selectedIndex = -1;
             update();
         }
+    }
+
+    // ===================== 新增：点击倍速（可切回1倍） =====================
+    if(speed2xButtonRect.contains(clickPos)){
+        if(currentSpeed == 2){
+            // 已经是2倍 → 切回1倍原速
+            currentSpeed = 1;
+            gameTimer->setInterval(300);
+        }else{
+            // 切到2倍
+            currentSpeed = 2;
+            gameTimer->setInterval(150);
+        }
+        update();
+        return;
+    }
+    if(speed3xButtonRect.contains(clickPos)){
+        if(currentSpeed == 3){
+            // 已经是3倍 → 切回1倍原速
+            currentSpeed = 1;
+            gameTimer->setInterval(300);
+        }else{
+            // 切到3倍
+            currentSpeed = 3;
+            gameTimer->setInterval(100);
+        }
+        update();
+        return;
+    }
+    if(speed10xButtonRect.contains(clickPos)){
+        if(currentSpeed == 10){
+            // 已经是10倍 → 切回1倍原速
+            currentSpeed = 1;
+            gameTimer->setInterval(300);
+        }else{
+            // 切到10倍
+            currentSpeed = 10;
+            gameTimer->setInterval(30);
+        }
+        update();
+        return;
+    }
+
+    // ===================== 新增：点击返回主界面 =====================
+    if(gameOver && backToMenuButtonRect.contains(clickPos))
+    {
+        this->close();
+        StartWindow* w = new StartWindow;
+        w->show();
+        return;
     }
 }
 
@@ -1123,8 +1263,8 @@ void cell::mouseReleaseEvent(QMouseEvent *event)
 int cell::countAliveCells(CellType type)
 {
     int cnt = 0;
-    for (int i = 0; i < GRID_ROWS; i++)
-        for (int j = 0; j < GRID_COLS; j++)
+    for (int i = 0; i < GRID_COLS; i++)
+        for (int j = 0; j < GRID_ROWS; j++)
             if (currentGrid[i][j] == type) cnt++;
     return cnt;
 }
@@ -1154,4 +1294,18 @@ void cell::drawScoreInfo(QPainter& painter)
     painter.drawText(700, 20, QString("蓝方分数：%1").arg(blueScore));
     painter.setPen(Qt::red);
     painter.drawText(900, 20, QString("红方分数：%1").arg(redScore));
+}
+
+// ===================== 新增：绘制返回主界面按钮 =====================
+void cell::drawBackToMenuButton(QPainter& painter)
+{
+    if(gameOver) // 只有游戏结束才显示
+    {
+        painter.setPen(Qt::black);
+        painter.setBrush(Qt::white);
+        painter.drawRect(backToMenuButtonRect);
+        painter.setPen(Qt::black);
+        painter.setFont(QFont("Arial", 11, QFont::Bold));
+        painter.drawText(backToMenuButtonRect, Qt::AlignCenter, "返回主界面");
+    }
 }

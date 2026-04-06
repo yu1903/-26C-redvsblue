@@ -13,6 +13,7 @@ PatternSlot::PatternSlot(QObject *parent)
 void PatternSlot::initAllPatterns(const cell* game)
 {
     allBluePatterns.clear();
+    allBluePatterns.append(game->getbluesingleLifePatterns());
     allBluePatterns.append(game->getBlueStillLifePatterns());
     allBluePatterns.append(game->getBlueOscillatorPatterns());
     allBluePatterns.append(game->getBlueSpaceshipPatterns());
