@@ -13,7 +13,10 @@
 		"D:/cell/Image/blue.bmp",
 		"D:/cell/Image/background.bmp",
 		"D:/cell/Image/red.bmp",
-		"D:/cell/Image/flag.bmp"
+		"D:/cell/Image/flag.bmp",
+		"D:/cell/Image/purple1.bmp",
+		"D:/cell/Image/red1.bmp",
+		"D:/cell/Image/blue1.bmp"
 	],
 	"LOCK_FILE" : "D:/cell/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/CMakeFiles/cell_autogen.dir/AutoRcc_image_EWIEGA46WW_Lock.lock",
 	"MULTI_CONFIG" : false,

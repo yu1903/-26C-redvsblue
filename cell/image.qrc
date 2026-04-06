@@ -5,5 +5,8 @@
         <file>Image/purple.bmp</file>
         <file>Image/red.bmp</file>
         <file>Image/background.bmp</file>
+        <file>Image/blue1.bmp</file>
+        <file>Image/purple1.bmp</file>
+        <file>Image/red1.bmp</file>
     </qresource>
 </RCC>

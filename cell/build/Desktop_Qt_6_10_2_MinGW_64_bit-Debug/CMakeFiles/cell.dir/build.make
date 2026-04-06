@@ -82,6 +82,9 @@ cell_autogen/EWIEGA46WW/qrc_image.cpp: D:/cell/Image/blue.bmp
 cell_autogen/EWIEGA46WW/qrc_image.cpp: D:/cell/Image/background.bmp
 cell_autogen/EWIEGA46WW/qrc_image.cpp: D:/cell/Image/red.bmp
 cell_autogen/EWIEGA46WW/qrc_image.cpp: D:/cell/Image/flag.bmp
+cell_autogen/EWIEGA46WW/qrc_image.cpp: D:/cell/Image/purple1.bmp
+cell_autogen/EWIEGA46WW/qrc_image.cpp: D:/cell/Image/red1.bmp
+cell_autogen/EWIEGA46WW/qrc_image.cpp: D:/cell/Image/blue1.bmp
 cell_autogen/EWIEGA46WW/qrc_image.cpp: D:/Qt/6.10.2/mingw_64/bin/rcc.exe
 cell_autogen/EWIEGA46WW/qrc_image.cpp: D:/Qt/6.10.2/mingw_64/bin/rcc.exe
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=D:\cell\build\Desktop_Qt_6_10_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Automatic RCC for image.qrc"
@@ -147,11 +150,41 @@ CMakeFiles/cell.dir/PatternSlot.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/PatternSlot.cpp.s"
 	D:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\cell\PatternSlot.cpp -o CMakeFiles\cell.dir\PatternSlot.cpp.s
 
+CMakeFiles/cell.dir/StartWindow.cpp.obj: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/StartWindow.cpp.obj: CMakeFiles/cell.dir/includes_CXX.rsp
+CMakeFiles/cell.dir/StartWindow.cpp.obj: D:/cell/StartWindow.cpp
+CMakeFiles/cell.dir/StartWindow.cpp.obj: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\cell\build\Desktop_Qt_6_10_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/cell.dir/StartWindow.cpp.obj"
+	D:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/StartWindow.cpp.obj -MF CMakeFiles\cell.dir\StartWindow.cpp.obj.d -o CMakeFiles\cell.dir\StartWindow.cpp.obj -c D:\cell\StartWindow.cpp
+
+CMakeFiles/cell.dir/StartWindow.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/StartWindow.cpp.i"
+	D:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\cell\StartWindow.cpp > CMakeFiles\cell.dir\StartWindow.cpp.i
+
+CMakeFiles/cell.dir/StartWindow.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/StartWindow.cpp.s"
+	D:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\cell\StartWindow.cpp -o CMakeFiles\cell.dir\StartWindow.cpp.s
+
+CMakeFiles/cell.dir/HelpDialog.cpp.obj: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/HelpDialog.cpp.obj: CMakeFiles/cell.dir/includes_CXX.rsp
+CMakeFiles/cell.dir/HelpDialog.cpp.obj: D:/cell/HelpDialog.cpp
+CMakeFiles/cell.dir/HelpDialog.cpp.obj: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\cell\build\Desktop_Qt_6_10_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/cell.dir/HelpDialog.cpp.obj"
+	D:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/HelpDialog.cpp.obj -MF CMakeFiles\cell.dir\HelpDialog.cpp.obj.d -o CMakeFiles\cell.dir\HelpDialog.cpp.obj -c D:\cell\HelpDialog.cpp
+
+CMakeFiles/cell.dir/HelpDialog.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/HelpDialog.cpp.i"
+	D:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\cell\HelpDialog.cpp > CMakeFiles\cell.dir\HelpDialog.cpp.i
+
+CMakeFiles/cell.dir/HelpDialog.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/HelpDialog.cpp.s"
+	D:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\cell\HelpDialog.cpp -o CMakeFiles\cell.dir\HelpDialog.cpp.s
+
 CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj: CMakeFiles/cell.dir/flags.make
 CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj: CMakeFiles/cell.dir/includes_CXX.rsp
 CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj: cell_autogen/EWIEGA46WW/qrc_image.cpp
 CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj: CMakeFiles/cell.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\cell\build\Desktop_Qt_6_10_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\cell\build\Desktop_Qt_6_10_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj"
 	D:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj -MF CMakeFiles\cell.dir\cell_autogen\EWIEGA46WW\qrc_image.cpp.obj.d -o CMakeFiles\cell.dir\cell_autogen\EWIEGA46WW\qrc_image.cpp.obj -c D:\cell\build\Desktop_Qt_6_10_2_MinGW_64_bit-Debug\cell_autogen\EWIEGA46WW\qrc_image.cpp
 
 CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.i: cmake_force
@@ -168,6 +201,8 @@ cell_OBJECTS = \
 "CMakeFiles/cell.dir/main.cpp.obj" \
 "CMakeFiles/cell.dir/cell.cpp.obj" \
 "CMakeFiles/cell.dir/PatternSlot.cpp.obj" \
+"CMakeFiles/cell.dir/StartWindow.cpp.obj" \
+"CMakeFiles/cell.dir/HelpDialog.cpp.obj" \
 "CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj"
 
 # External object files for target cell
@@ -177,6 +212,8 @@ cell.exe: CMakeFiles/cell.dir/cell_autogen/mocs_compilation.cpp.obj
 cell.exe: CMakeFiles/cell.dir/main.cpp.obj
 cell.exe: CMakeFiles/cell.dir/cell.cpp.obj
 cell.exe: CMakeFiles/cell.dir/PatternSlot.cpp.obj
+cell.exe: CMakeFiles/cell.dir/StartWindow.cpp.obj
+cell.exe: CMakeFiles/cell.dir/HelpDialog.cpp.obj
 cell.exe: CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj
 cell.exe: CMakeFiles/cell.dir/build.make
 cell.exe: D:/Qt/6.10.2/mingw_64/lib/libQt6Widgets.a
@@ -186,7 +223,7 @@ cell.exe: D:/Qt/6.10.2/mingw_64/lib/libQt6EntryPoint.a
 cell.exe: CMakeFiles/cell.dir/linkLibs.rsp
 cell.exe: CMakeFiles/cell.dir/objects1.rsp
 cell.exe: CMakeFiles/cell.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=D:\cell\build\Desktop_Qt_6_10_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable cell.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=D:\cell\build\Desktop_Qt_6_10_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable cell.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\cell.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

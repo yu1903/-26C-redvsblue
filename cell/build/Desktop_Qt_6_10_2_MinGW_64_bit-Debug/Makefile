@@ -199,6 +199,30 @@ cell_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell_autogen.dir\build.make CMakeFiles/cell_autogen.dir/build
 .PHONY : cell_autogen/fast
 
+HelpDialog.obj: HelpDialog.cpp.obj
+.PHONY : HelpDialog.obj
+
+# target to build an object file
+HelpDialog.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/HelpDialog.cpp.obj
+.PHONY : HelpDialog.cpp.obj
+
+HelpDialog.i: HelpDialog.cpp.i
+.PHONY : HelpDialog.i
+
+# target to preprocess a source file
+HelpDialog.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/HelpDialog.cpp.i
+.PHONY : HelpDialog.cpp.i
+
+HelpDialog.s: HelpDialog.cpp.s
+.PHONY : HelpDialog.s
+
+# target to generate assembly for a file
+HelpDialog.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/HelpDialog.cpp.s
+.PHONY : HelpDialog.cpp.s
+
 PatternSlot.obj: PatternSlot.cpp.obj
 .PHONY : PatternSlot.obj
 
@@ -222,6 +246,30 @@ PatternSlot.s: PatternSlot.cpp.s
 PatternSlot.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/PatternSlot.cpp.s
 .PHONY : PatternSlot.cpp.s
+
+StartWindow.obj: StartWindow.cpp.obj
+.PHONY : StartWindow.obj
+
+# target to build an object file
+StartWindow.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/StartWindow.cpp.obj
+.PHONY : StartWindow.cpp.obj
+
+StartWindow.i: StartWindow.cpp.i
+.PHONY : StartWindow.i
+
+# target to preprocess a source file
+StartWindow.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/StartWindow.cpp.i
+.PHONY : StartWindow.cpp.i
+
+StartWindow.s: StartWindow.cpp.s
+.PHONY : StartWindow.s
+
+# target to generate assembly for a file
+StartWindow.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/StartWindow.cpp.s
+.PHONY : StartWindow.cpp.s
 
 cell.obj: cell.cpp.obj
 .PHONY : cell.obj
@@ -334,9 +382,15 @@ help:
 	@echo ... cell_autogen
 	@echo ... cell_autogen_timestamp_deps
 	@echo ... cell
+	@echo ... HelpDialog.obj
+	@echo ... HelpDialog.i
+	@echo ... HelpDialog.s
 	@echo ... PatternSlot.obj
 	@echo ... PatternSlot.i
 	@echo ... PatternSlot.s
+	@echo ... StartWindow.obj
+	@echo ... StartWindow.i
+	@echo ... StartWindow.s
 	@echo ... cell.obj
 	@echo ... cell.i
 	@echo ... cell.s
