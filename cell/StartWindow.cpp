@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include<QPainter>
+//#include <QTimer>
 
 StartWindow::StartWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -89,9 +90,9 @@ void StartWindow::initUI()
 // 点击START：关闭主界面，打开游戏界面
 void StartWindow::onStartClicked()
 {
-    this->close();          // 关闭启动界面
-    cell *gameWin = new cell; // 创建游戏窗口
-    gameWin->show();        // 显示游戏
+            this->close();          // 关闭启动界面
+            cell *gameWin = new cell; // 创建游戏窗口
+            gameWin->show();        // 显示游戏
 }
 
 // 点击HELP：打开自定义滚动帮助窗口

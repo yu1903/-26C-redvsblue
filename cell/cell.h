@@ -219,6 +219,12 @@ public:
 
 private:
     void drawBackToMenuButton(QPainter& painter); // 绘制返回按钮（新增）
+
+    bool showReady0Text;       // 是否显示"准备好了吗"
+    bool showReadyText;       // 是否显示"你真的能打败随机放置的无脑电脑吗"
+    bool showStartText;       // 是否显示"开始游戏"
+    int  tipStep; // 0=无 1=准备 2=开始
+
 };
 
 #endif // CELL_H
