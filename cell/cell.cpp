@@ -29,7 +29,7 @@ cell::cell(QWidget *parent)
     , generationCount(0)
     , blueScore(0)
     , redScore(0)
-    , currentSpeed(1)  // 新增：默认正常速度
+    , currentSpeed(1)  // 默认正常速度
 {
     ui->setupUi(this);
 
@@ -46,6 +46,7 @@ cell::cell(QWidget *parent)
 
     // 初始化游戏基础数据
     initGrid();          // 全空网格
+    initTerritory();     // 【新增】初始化领地：初始区域=领地
     initFlags();         // 初始化旗帜
     initCellPatterns();  // 初始化细胞组合模板
     initEnergy();        // 初始化能量
@@ -82,11 +83,66 @@ cell::cell(QWidget *parent)
     // 刚进游戏先暂停，提示走完再自动开始
     isPaused = true;
 
+    // ===================== 背景音乐：游戏初始播放正常音乐 =====================
+    AudioManager::instance().playGameNormalMusic();
 }
 
 cell::~cell()
 {
     delete ui;
+
+    // 退出游戏界面时停止音乐
+    AudioManager::instance().stopMusic();
+}
+
+// ===================== 初始化领地 新增 =====================
+void cell::initTerritory()
+{
+    for (int i = 0; i < GRID_COLS; ++i) {
+        for (int j = 0; j < GRID_ROWS; ++j) {
+            if (i <= 74) {
+                // 蓝方初始领地
+                territoryGrid[i][j] = BLUE_TERRITORY;
+            } else if (i >= 125) {
+                // 红方初始领地
+                territoryGrid[i][j] = RED_TERRITORY;
+            } else {
+                // 中立领地
+                territoryGrid[i][j] = NEUTRAL_TERRITORY;
+            }
+        }
+    }
+}
+
+// ===================== 更新领地：细胞生存过的格子变为己方领地 新增 =====================
+void cell::updateTerritory()
+{
+    for (int i = 0; i < GRID_COLS; ++i) {
+        for (int j = 0; j < GRID_ROWS; ++j) {
+            if (currentGrid[i][j] == BLUE_CELL) {
+                // 蓝色细胞生存过 → 蓝方领地
+                territoryGrid[i][j] = BLUE_TERRITORY;
+            } else if (currentGrid[i][j] == RED_CELL) {
+                // 红色细胞生存过 → 红方领地
+                territoryGrid[i][j] = RED_TERRITORY;
+            }
+            // 紫色细胞不改变领地
+        }
+    }
+}
+
+// ===================== 统计指定类型领地数量 新增 =====================
+int cell::countTerritory(TerritoryType type)
+{
+    int count = 0;
+    for (int i = 0; i < GRID_COLS; ++i) {
+        for (int j = 0; j < GRID_ROWS; ++j) {
+            if (territoryGrid[i][j] == type) {
+                count++;
+            }
+        }
+    }
+    return count;
 }
 
 // ===================== 初始化清除卡牌 5*5 ~ 10*10 =====================
@@ -98,8 +154,8 @@ void cell::initClearCards()
         ClearCard card;
         card.size = s;
         card.energyCost = s*s;
-        card.cooldown = 100;
-        card.remain = 0;
+        card.cooldown = 200;
+        card.remain = 150;
         card.text = QString("清除%1").arg(s);
         m_clearCards.append(card);//在容器末尾追加元素，也就是这里在把5,6,7,8，9,10都一个个的加进去。
     }
@@ -460,16 +516,6 @@ void cell::updateEnergy()
 // 检查细胞组合放置是否合法（带旋转）
 bool cell::isPlacementValid(int centerX, int centerY, const CellPattern& pattern, CellType cellType, RotationDirection dir)
 {
-    // 阵营区域限制
-    int minCol = 0, maxCol = 0;
-    if (cellType == BLUE_CELL) {
-        minCol = 0;
-        maxCol = 74; // 蓝方区域
-    } else if (cellType == RED_CELL) {
-        minCol = 125;
-        maxCol = 199; // 红方区域
-    }
-
     // 获取旋转后坐标
     QVector<QPoint> rotatedPos = rotatePattern(pattern.cellPositions, dir);
 
@@ -483,8 +529,11 @@ bool cell::isPlacementValid(int centerX, int centerY, const CellPattern& pattern
             return false;
         }
 
-        // 阵营区域判断
-        if (x < minCol || x > maxCol) {
+        // ===================== 核心规则：只能放在自己领地内 =====================
+        if (cellType == BLUE_CELL && territoryGrid[x][y] != BLUE_TERRITORY) {
+            return false;
+        }
+        if (cellType == RED_CELL && territoryGrid[x][y] != RED_TERRITORY) {
             return false;
         }
 
@@ -541,7 +590,7 @@ void cell::randomPlacePatterns()
 
 
     // ------------------- 红方：概率选择 + 等概率朝向 + 多数量放置 -------------------
-    if (redEnergy > 10) {
+    if (redEnergy > 50) {
         // 随机方向：左上 / 左下 各50%
         RotationDirection redDir = (QRandomGenerator::global()->bounded(2) == 0) ? UP_LEFT : DOWN_LEFT;
 
@@ -552,14 +601,14 @@ void cell::randomPlacePatterns()
         // 按能量区间分配概率
         if (redEnergy < 500) {
             if (randVal < 40)      selectedList = redGunPatterns;
-            else if (randVal < 65) selectedList = redSpaceshipPatterns;
-            else if (randVal < 75) selectedList = redOscillatorPatterns;
+            else if (randVal < 80) selectedList = redSpaceshipPatterns;
+            else if (randVal < 85) selectedList = redOscillatorPatterns;
             else if (randVal < 90) selectedList = redStillLifePatterns;
             else                   placeNothing = true;
         } else {
             if (randVal < 40)      selectedList = redGunPatterns;
-            else if (randVal < 70) selectedList = redSpaceshipPatterns;
-            else if (randVal < 84) selectedList = redOscillatorPatterns;
+            else if (randVal < 90) selectedList = redSpaceshipPatterns;
+            else if (randVal < 95) selectedList = redOscillatorPatterns;
             else if (randVal < 99) selectedList = redStillLifePatterns;
             else                   placeNothing = true;
         }
@@ -588,7 +637,7 @@ void cell::randomPlacePatterns()
             bool ok = false;
             int tryCnt = 0;
             while (tryCnt++ < maxAttempts && !ok) {
-                int cx = QRandomGenerator::global()->bounded(125, 200);
+                int cx = QRandomGenerator::global()->bounded(0, GRID_COLS);
                 int cy = QRandomGenerator::global()->bounded(GRID_ROWS); // 红方区域
                 ok = placeCellPattern(cx, cy, pattern, RED_CELL, redDir);
             }
@@ -703,6 +752,9 @@ void cell::calculateNextGeneration()
         }
     }
 
+    // 更新领地 新增
+    updateTerritory();
+
     // 检查旗帜与游戏结束
     checkFlagOccupation();
     if (!gameOver) {
@@ -717,6 +769,30 @@ void cell::calculateNextGeneration()
         }
     }
 }
+
+// ===================== 绘制领地 新增 =====================
+void cell::drawTerritory(QPainter &painter)
+{
+    for (int i = 0; i < GRID_COLS; ++i) {
+        for (int j = 0; j < GRID_ROWS; ++j) {
+            int x = 100 + i * CELL_WIDTH;
+            int y = 30 + j * CELL_HEIGHT;
+
+            switch (territoryGrid[i][j]) {
+            case BLUE_TERRITORY:
+                painter.fillRect(x, y, CELL_WIDTH, CELL_HEIGHT, QColor(0, 0, 255, 30));
+                break;
+            case RED_TERRITORY:
+                painter.fillRect(x, y, CELL_WIDTH, CELL_HEIGHT, QColor(255, 0, 0, 30));
+                break;
+            case NEUTRAL_TERRITORY:
+            default:
+                break;
+            }
+        }
+    }
+}
+
 
 // 绘制所有细胞
 void cell::drawCells(QPainter &painter)
@@ -777,6 +853,9 @@ void cell::paintEvent(QPaintEvent *event)
     painter.drawRect(100, 30, GAME_WIDTH, GAME_HEIGHT);
     painter.drawPixmap(100, 30, GAME_WIDTH, GAME_HEIGHT, backgroundImg);
 
+    // 绘制领地 新增
+    drawTerritory(painter);
+
     // 绘制游戏元素
     drawCells(painter);
     drawFlags(painter);
@@ -793,10 +872,10 @@ void cell::paintEvent(QPaintEvent *event)
     drawGenerationInfo(painter);
     drawScoreInfo(painter); // 绘制分数
 
-    // ===================== 新增：绘制倍速按钮 =====================
+    // ===================== 绘制倍速按钮 =====================
     drawSpeedButtons(painter);
 
-    drawBackToMenuButton(painter); // 新增：绘制返回按钮
+    drawBackToMenuButton(painter); // 绘制返回按钮
 
     // ===================== 绘制提示 =====================
     if (showReady0Text || showReadyText || showStartText)
@@ -806,7 +885,7 @@ void cell::paintEvent(QPaintEvent *event)
         if (showReady0Text)
             painter.drawText(rect(), Qt::AlignCenter, "准备好了吗");
         else if (showReadyText)
-            painter.drawText(rect(), Qt::AlignCenter, "你真的能打败随机放置的无脑电脑吗？");
+            painter.drawText(rect(), Qt::AlignCenter, "预备！");//你真的能打败随机放置的无脑电脑吗？
         else if (showStartText)
             painter.drawText(rect(), Qt::AlignCenter, "开始游戏");
     }
@@ -875,6 +954,11 @@ void cell::updateGameState()
         randomPlacePatterns();   // 随机放置
         calculateNextGeneration();// 计算下一代
         update();                // 重绘
+
+        // ===================== 背景音乐：8000代后切换音乐 =====================
+        if (generationCount == 8000) {
+            AudioManager::instance().playGameLateMusic();
+        }
     }
 }
 
@@ -983,7 +1067,7 @@ void cell::drawPatternSlots(QPainter& painter)
             int py = cy + p.y() * 2;
             painter.drawEllipse(px - 5, py - 5, 2, 2);
         }
-        // ====================== 新增：显示卡片名字 ======================
+        // ====================== 显示卡片名字 ======================
         painter.setPen(Qt::black);          // 文字颜色黑色
         painter.setFont(QFont("Arial", 8)); // 小号字体，不挡缩略图
         painter.drawText(slotRect.adjusted(0, 35, 0, 0),  // 向下偏移一点，不盖住图案
@@ -1010,7 +1094,7 @@ void cell::drawPauseButton(QPainter& painter)
     painter.drawText(pauseButtonRect, Qt::AlignCenter, isPaused ? "▶" : "||");
 }
 
-// ===================== 新增：绘制倍速按钮 =====================
+// ===================== 绘制倍速按钮 =====================
 void cell::drawSpeedButtons(QPainter& painter)
 {
     // 绘制 2倍速按钮 >>
@@ -1058,7 +1142,7 @@ bool cell::findNearestValidPos(int& cx, int& cy, const CellPattern& pat, Rotatio
     bool found = false;
 
     // 遍历蓝方全区域搜索
-    for (int i = 0; i < 75; ++i) {
+    for (int i = 0; i < GRID_COLS; ++i) {
         for (int j = 0; j < GRID_ROWS; ++j) {
             if (isPlacementValid(i, j, pat, BLUE_CELL, dir)) {
                 int dist = (i - cx) * (i - cx) + (j - cy) * (j - cy);
@@ -1163,6 +1247,13 @@ void cell::mousePressEvent(QMouseEvent *event)
     // 2. 点击暂停按钮
     if (pauseButtonRect.contains(clickPos)) {
         isPaused = !isPaused;
+        if (isPaused) {
+            // 暂停音乐...
+            AudioManager::instance().pauseMusic();
+        } else {
+            // 恢复音乐...
+            AudioManager::instance().resumeMusic();
+        }
         update();
         return;
     }
@@ -1231,7 +1322,7 @@ void cell::mousePressEvent(QMouseEvent *event)
         }
     }
 
-    // ===================== 新增：点击倍速（可切回1倍） =====================
+    // ===================== 点击倍速（可切回1倍） =====================
     if(speed2xButtonRect.contains(clickPos)){
         if(currentSpeed == 2){
             // 已经是2倍 → 切回1倍原速
@@ -1272,7 +1363,7 @@ void cell::mousePressEvent(QMouseEvent *event)
         return;
     }
 
-    // ===================== 新增：点击返回主界面 =====================
+    // ===================== 点击返回主界面 =====================
     if(gameOver && backToMenuButtonRect.contains(clickPos))
     {
         this->close();
@@ -1335,8 +1426,13 @@ void cell::updateScore()
     int destroyedRedFlags = 0;
     for (auto& f : redFlags) if (!f.isAlive) destroyedRedFlags++;
 
-    blueScore = blueCellCount * 5 + destroyedRedFlags * 1000;
-    redScore  = redCellCount * 5 + destroyedBlueFlags * 1000;
+    // 领地分：每格10分 新增
+    int blueTerritoryCount = countTerritory(BLUE_TERRITORY);
+    int redTerritoryCount = countTerritory(RED_TERRITORY);
+
+    // 总分数 = 细胞分 + 旗帜分 + 领地分
+    blueScore = blueCellCount * 10 + destroyedRedFlags * 3000 + blueTerritoryCount * 5;
+    redScore  = redCellCount * 10 + destroyedBlueFlags * 3000 + redTerritoryCount * 5;
 }
 
 // 绘制分数
@@ -1348,7 +1444,7 @@ void cell::drawScoreInfo(QPainter& painter)
     painter.drawText(900, 20, QString("红方分数：%1").arg(redScore));
 }
 
-// ===================== 新增：绘制返回主界面按钮 =====================
+// ===================== 绘制返回主界面按钮 =====================
 void cell::drawBackToMenuButton(QPainter& painter)
 {
     if(gameOver) // 只有游戏结束才显示

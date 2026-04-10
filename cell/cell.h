@@ -12,6 +12,7 @@ class StartWindow;  // 前置声明
 #include <QMessageBox>
 #include <QVector>
 #include <QMouseEvent>
+#include "AudioManager.h"  // 音频管理器
 
 // 前置声明卡槽管理类
 class PatternSlot;
@@ -62,6 +63,13 @@ struct ClearCard {
     QString text;       // 显示文字 清除5~10
 };
 
+// ===================== 领地类型枚举 新增 =====================
+enum TerritoryType {
+    NEUTRAL_TERRITORY,    // 中立领地
+    BLUE_TERRITORY,       // 蓝方领地
+    RED_TERRITORY         // 红方领地
+};
+
 class cell : public QMainWindow
 {
     Q_OBJECT
@@ -90,7 +98,7 @@ public:
     QRect rotateButtonRect;           // 旋转按钮位置
     QRect backToMenuButtonRect;       // 返回主界面按钮（新增）
 
-    // ===================== 新增：倍速按钮区域 =====================
+    // ===================== 倍速按钮区域 =====================
     QRect speed2xButtonRect;          // 2倍速按钮 >>
     QRect speed3xButtonRect;          // 3倍速按钮 >>>
     QRect speed10xButtonRect;          // 10倍速按钮 ×10
@@ -119,6 +127,10 @@ private:
     // 细胞状态数组（当前代和下一代）
     CellType currentGrid[GRID_COLS][GRID_ROWS];//应为【X】【Y】
     CellType nextGrid[GRID_COLS][GRID_ROWS];//应为【X】【Y】
+
+    // ===================== 领地网格数组 新增 =====================
+    TerritoryType territoryGrid[GRID_COLS][GRID_ROWS];
+
 
     // 旗帜数组
     Flag blueFlags[FLAG_COUNT];            // 蓝色旗帜
@@ -161,12 +173,18 @@ private:
     int redScore;
     void updateScore();        // 更新分数
     int countAliveCells(CellType type); // 统计指定颜色存活细胞数
+    // ===================== 统计领地数量 新增 =====================
+    int countTerritory(TerritoryType type);
+
+
 
     // 初始化函数
     void initGrid();                       // 初始化细胞网格（全空）
     void initFlags();                      // 初始化旗帜位置
     void initCellPatterns();               // 初始化细胞组合模板
     void initEnergy();                     // 初始化能量
+    // ===================== 初始化领地 新增 =====================
+    void initTerritory();
 
     // 统计函数
     int countAllAliveCells(int x, int y);  // 统计周围所有活细胞数（红蓝紫）
@@ -177,6 +195,9 @@ private:
     void calculateNextGeneration();        // 计算下一代细胞
     void checkFlagOccupation();            // 检查旗帜是否被占领
     bool checkGameOver();                  // 检查游戏是否结束
+
+    // ===================== 更新领地状态 新增 =====================
+    void updateTerritory();
 
     // 细胞组合相关
     bool placeCellPattern(int centerX, int centerY, const CellPattern& pattern, CellType cellType, RotationDirection dir = UP_RIGHT); // 放置细胞组合（带旋转）
@@ -189,6 +210,8 @@ private:
     void drawCells(QPainter &painter);     // 绘制细胞
     void drawFlags(QPainter &painter);     // 绘制旗帜
     void updateEnergy();                   // 更新能量值
+    // ===================== 绘制领地 新增 =====================
+    void drawTerritory(QPainter &painter);
 
     // 新增UI绘制
     void drawPatternSlots(QPainter& painter);  // 绘制左侧卡槽
@@ -197,7 +220,7 @@ private:
     void drawScoreInfo(QPainter& painter);   // 绘制分数
     bool findNearestValidPos(int& cx, int& cy, const CellPattern& pat, RotationDirection dir); // 寻找最近可放置位置
 
-    // ===================== 新增：绘制倍速按钮 =====================
+    // ===================== 绘制倍速按钮 =====================
     void drawSpeedButtons(QPainter& painter);
 
 

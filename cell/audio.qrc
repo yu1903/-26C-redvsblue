@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/audio">
+        <file>audio/menu.mp3</file>
+        <file>audio/game_normal.mp3</file>
+        <file>audio/game_late.mp3</file>
+    </qresource>
+</RCC>

@@ -7,6 +7,7 @@
 #include <QDebug>
 #include<QPainter>
 //#include <QTimer>
+#include "AudioManager.h"
 
 StartWindow::StartWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -85,6 +86,9 @@ void StartWindow::initUI()
     // ===================== 组装主布局 =====================
     mainLayout->addLayout(cellLayout);
     mainLayout->addLayout(btnLayout);
+
+    // ===================== 主界面背景音乐 =====================
+    AudioManager::instance().playMenuMusic();
 }
 
 // 点击START：关闭主界面，打开游戏界面

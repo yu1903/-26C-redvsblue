@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/cell.dir/AudioManager.cpp.obj"
+  "CMakeFiles/cell.dir/AudioManager.cpp.obj.d"
   "CMakeFiles/cell.dir/HelpDialog.cpp.obj"
   "CMakeFiles/cell.dir/HelpDialog.cpp.obj.d"
   "CMakeFiles/cell.dir/PatternSlot.cpp.obj"
@@ -7,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/cell.dir/StartWindow.cpp.obj.d"
   "CMakeFiles/cell.dir/cell.cpp.obj"
   "CMakeFiles/cell.dir/cell.cpp.obj.d"
+  "CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_audio.cpp.obj"
+  "CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_audio.cpp.obj.d"
   "CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj"
   "CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_image.cpp.obj.d"
   "CMakeFiles/cell.dir/cell_autogen/mocs_compilation.cpp.obj"
@@ -19,6 +23,7 @@ file(REMOVE_RECURSE
   "cell.exe"
   "cell.exe.manifest"
   "cell.pdb"
+  "cell_autogen/EWIEGA46WW/qrc_audio.cpp"
   "cell_autogen/EWIEGA46WW/qrc_image.cpp"
   "cell_autogen/mocs_compilation.cpp"
   "cell_autogen/timestamp"

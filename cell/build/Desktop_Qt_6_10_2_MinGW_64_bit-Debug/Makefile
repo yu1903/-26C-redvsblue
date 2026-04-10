@@ -199,6 +199,30 @@ cell_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell_autogen.dir\build.make CMakeFiles/cell_autogen.dir/build
 .PHONY : cell_autogen/fast
 
+AudioManager.obj: AudioManager.cpp.obj
+.PHONY : AudioManager.obj
+
+# target to build an object file
+AudioManager.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/AudioManager.cpp.obj
+.PHONY : AudioManager.cpp.obj
+
+AudioManager.i: AudioManager.cpp.i
+.PHONY : AudioManager.i
+
+# target to preprocess a source file
+AudioManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/AudioManager.cpp.i
+.PHONY : AudioManager.cpp.i
+
+AudioManager.s: AudioManager.cpp.s
+.PHONY : AudioManager.s
+
+# target to generate assembly for a file
+AudioManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/AudioManager.cpp.s
+.PHONY : AudioManager.cpp.s
+
 HelpDialog.obj: HelpDialog.cpp.obj
 .PHONY : HelpDialog.obj
 
@@ -295,6 +319,30 @@ cell.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/cell.cpp.s
 .PHONY : cell.cpp.s
 
+cell_autogen/EWIEGA46WW/qrc_audio.obj: cell_autogen/EWIEGA46WW/qrc_audio.cpp.obj
+.PHONY : cell_autogen/EWIEGA46WW/qrc_audio.obj
+
+# target to build an object file
+cell_autogen/EWIEGA46WW/qrc_audio.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_audio.cpp.obj
+.PHONY : cell_autogen/EWIEGA46WW/qrc_audio.cpp.obj
+
+cell_autogen/EWIEGA46WW/qrc_audio.i: cell_autogen/EWIEGA46WW/qrc_audio.cpp.i
+.PHONY : cell_autogen/EWIEGA46WW/qrc_audio.i
+
+# target to preprocess a source file
+cell_autogen/EWIEGA46WW/qrc_audio.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_audio.cpp.i
+.PHONY : cell_autogen/EWIEGA46WW/qrc_audio.cpp.i
+
+cell_autogen/EWIEGA46WW/qrc_audio.s: cell_autogen/EWIEGA46WW/qrc_audio.cpp.s
+.PHONY : cell_autogen/EWIEGA46WW/qrc_audio.s
+
+# target to generate assembly for a file
+cell_autogen/EWIEGA46WW/qrc_audio.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\cell.dir\build.make CMakeFiles/cell.dir/cell_autogen/EWIEGA46WW/qrc_audio.cpp.s
+.PHONY : cell_autogen/EWIEGA46WW/qrc_audio.cpp.s
+
 cell_autogen/EWIEGA46WW/qrc_image.obj: cell_autogen/EWIEGA46WW/qrc_image.cpp.obj
 .PHONY : cell_autogen/EWIEGA46WW/qrc_image.obj
 
@@ -382,6 +430,9 @@ help:
 	@echo ... cell_autogen
 	@echo ... cell_autogen_timestamp_deps
 	@echo ... cell
+	@echo ... AudioManager.obj
+	@echo ... AudioManager.i
+	@echo ... AudioManager.s
 	@echo ... HelpDialog.obj
 	@echo ... HelpDialog.i
 	@echo ... HelpDialog.s
@@ -394,6 +445,9 @@ help:
 	@echo ... cell.obj
 	@echo ... cell.i
 	@echo ... cell.s
+	@echo ... cell_autogen/EWIEGA46WW/qrc_audio.obj
+	@echo ... cell_autogen/EWIEGA46WW/qrc_audio.i
+	@echo ... cell_autogen/EWIEGA46WW/qrc_audio.s
 	@echo ... cell_autogen/EWIEGA46WW/qrc_image.obj
 	@echo ... cell_autogen/EWIEGA46WW/qrc_image.i
 	@echo ... cell_autogen/EWIEGA46WW/qrc_image.s
