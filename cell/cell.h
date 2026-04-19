@@ -200,7 +200,7 @@ private:
     void updateTerritory();
 
     // 细胞组合相关
-    bool placeCellPattern(int centerX, int centerY, const CellPattern& pattern, CellType cellType, RotationDirection dir = UP_RIGHT); // 放置细胞组合（带旋转）
+    bool placeCellPattern(int centerX, int centerY, const CellPattern& pattern, CellType cellType, RotationDirection dir = DOWN_RIGHT); // 放置细胞组合（带旋转）
     void randomPlacePatterns();            // 随机放置细胞组合（按优先级）
     bool isPlacementValid(int x, int y, const CellPattern& pattern, CellType cellType, RotationDirection dir); // 检查放置是否合法（带旋转）
     QVector<QPoint> rotatePattern(const QVector<QPoint>& original, RotationDirection dir); // 旋转组合坐标

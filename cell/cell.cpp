@@ -46,7 +46,7 @@ cell::cell(QWidget *parent)
 
     // 初始化游戏基础数据
     initGrid();          // 全空网格
-    initTerritory();     // 【新增】初始化领地：初始区域=领地
+    initTerritory();     // 初始化领地：初始区域=领地
     initFlags();         // 初始化旗帜
     initCellPatterns();  // 初始化细胞组合模板
     initEnergy();        // 初始化能量
@@ -62,12 +62,12 @@ cell::cell(QWidget *parent)
     pauseButtonRect = QRect(1670, 0, 30, 30);    // 右上角暂停按钮
     rotateButtonRect = QRect(20, 10, 20, 20);     // 左上角旋转按钮
 
-    // ===================== 新增：倍速按钮位置（右上角并排） =====================
+    // ===================== 倍速按钮位置（右上角并排） =====================
     speed2xButtonRect = QRect(1640, 0, 30, 30);    // >> 2倍速
     speed3xButtonRect = QRect(1610, 0, 30, 30);    // >>> 3倍速
     speed10xButtonRect = QRect(1580, 0, 30, 30);    // ×10 10倍速
 
-    // ===================== 新增：返回主界面按钮 =====================
+    // ===================== 返回主界面按钮 =====================
     backToMenuButtonRect = QRect(790, 475, 120, 40);
 
     // 设置定时器（每300ms更新一次）
@@ -95,7 +95,7 @@ cell::~cell()
     AudioManager::instance().stopMusic();
 }
 
-// ===================== 初始化领地 新增 =====================
+// ===================== 初始化领地  =====================
 void cell::initTerritory()
 {
     for (int i = 0; i < GRID_COLS; ++i) {
@@ -114,7 +114,7 @@ void cell::initTerritory()
     }
 }
 
-// ===================== 更新领地：细胞生存过的格子变为己方领地 新增 =====================
+// ===================== 更新领地：细胞生存过的格子变为己方领地  =====================
 void cell::updateTerritory()
 {
     for (int i = 0; i < GRID_COLS; ++i) {
@@ -131,7 +131,7 @@ void cell::updateTerritory()
     }
 }
 
-// ===================== 统计指定类型领地数量 新增 =====================
+// ===================== 统计指定类型领地数量  =====================
 int cell::countTerritory(TerritoryType type)
 {
     int count = 0;
@@ -220,17 +220,17 @@ QVector<QPoint> cell::rotatePattern(const QVector<QPoint>& original, RotationDir
         int y = p.y();
 
         switch (dir) {
-        case UP_RIGHT:    // 右上旋转90°
-            rotated.append(QPoint(-y, x));
+        case UP_RIGHT:    // 右上
+            rotated.append(QPoint(x, -y));
             break;
         case DOWN_RIGHT:  // 右下（默认方向）
             rotated.append(QPoint(x, y));
             break;
-        case UP_LEFT:     // 左上180°翻转
+        case UP_LEFT:     // 左上
             rotated.append(QPoint(-x, -y));
             break;
-        case DOWN_LEFT:   // 左下旋转270°
-            rotated.append(QPoint(y, -x));
+        case DOWN_LEFT:   // 左下
+            rotated.append(QPoint(-x, y));
             break;
         }
     }
@@ -299,10 +299,10 @@ void cell::initCellPatterns()
     CellPattern lwss;
     lwss.name = "轻型飞船";
     lwss.cellPositions = {
-        QPoint(1,0), QPoint(4,0),
-        QPoint(0,1),
+        QPoint(0,0), QPoint(3,0),
+        QPoint(4,1),
         QPoint(0,2),QPoint(4,2),
-        QPoint(0,3), QPoint(1,3), QPoint(2,3), QPoint(3,3)
+        QPoint(1,3), QPoint(2,3), QPoint(3,3),QPoint(4,3)
     };
     lwss.energyCost = lwss.cellPositions.size() * ENERGY_PER_CELL_PLACEMENT;
     lwss.priority = 3;
@@ -312,12 +312,11 @@ void cell::initCellPatterns()
     CellPattern mwss;
     mwss.name = "中型飞船";
     mwss.cellPositions = {
-        QPoint(3, 0),
-        QPoint(1, 1), QPoint(5, 1),
-        QPoint(0, 2),
-        QPoint(0, 3),
-        QPoint(5, 3),
-        QPoint(0, 4), QPoint(1, 4), QPoint(2, 4), QPoint(3, 4), QPoint(4, 4)
+        QPoint(2, 0),
+        QPoint(0, 1), QPoint(4, 1),
+        QPoint(5, 2),
+        QPoint(0, 3),QPoint(5, 3),
+        QPoint(1, 4), QPoint(2, 4), QPoint(3, 4), QPoint(4, 4),QPoint(5, 4)
     };
     mwss.energyCost = mwss.cellPositions.size() * ENERGY_PER_CELL_PLACEMENT;
     mwss.priority = 3;
@@ -752,7 +751,7 @@ void cell::calculateNextGeneration()
         }
     }
 
-    // 更新领地 新增
+    // 更新领地
     updateTerritory();
 
     // 检查旗帜与游戏结束
@@ -763,14 +762,14 @@ void cell::calculateNextGeneration()
             gameTimer->stop();
             QMessageBox::information(this, "游戏结束", winner + "获胜！");
 
-            // 新增：游戏结束后允许返回主界面
+            // 游戏结束后允许返回主界面
             isPaused = true;
             update(); // 刷新界面显示返回按钮
         }
     }
 }
 
-// ===================== 绘制领地 新增 =====================
+// ===================== 绘制领地  =====================
 void cell::drawTerritory(QPainter &painter)
 {
     for (int i = 0; i < GRID_COLS; ++i) {
@@ -1206,8 +1205,11 @@ void cell::mousePressEvent(QMouseEvent *event)
     // ===================== 点击地图 = 执行清除 =====================
     if (selectedClearCardIndex != -1) {
         // 把鼠标坐标 → 地图网格坐标
-        int mx = event->x() - 100;
-        int my = event->y() - 30;
+        QPointF pos = event->position(); // 获取浮点型坐标
+        int mx = static_cast<int>(pos.x()) - 100;
+        int my = static_cast<int>(pos.y()) - 30;
+        //int mx = event->x() - 100;
+        //int my = event->y() - 30;
         int gx = mx / CELL_WIDTH;
         int gy = my / CELL_HEIGHT;
      if (mx >= 0 && my >= 0) {
@@ -1415,18 +1417,18 @@ int cell::countAliveCells(CellType type)
 // 更新分数
 void cell::updateScore()
 {
-    // 细胞分：每个5分
+    // 细胞分：每个10分
     int blueCellCount = countAliveCells(BLUE_CELL);
     int redCellCount = countAliveCells(RED_CELL);
 
-    // 旗帜分：摧毁一面+1000
+    // 旗帜分：摧毁一面+3000
     int destroyedBlueFlags = 0;
     for (auto& f : blueFlags) if (!f.isAlive) destroyedBlueFlags++;
 
     int destroyedRedFlags = 0;
     for (auto& f : redFlags) if (!f.isAlive) destroyedRedFlags++;
 
-    // 领地分：每格10分 新增
+    // 领地分：每格5分 新增
     int blueTerritoryCount = countTerritory(BLUE_TERRITORY);
     int redTerritoryCount = countTerritory(RED_TERRITORY);
 
