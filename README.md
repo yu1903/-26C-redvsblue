@@ -9,4 +9,4 @@
 
 #### 演示视频
 见bilibili：
-
+【【南开大学26C++】基于康威的生命游戏的红蓝细胞对决游戏】 https://www.bilibili.com/video/BV1SHoFB4EDh/?share_source=copy_web&vd_source=da1f7e33b7aa08ab06ffd4f98ae972b1
